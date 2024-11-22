@@ -48,6 +48,60 @@ docker compose run --rm node npm install
 docker compose run --rm node npm run watch
 ```
 
+## Frontend avec Vite.js
+
+Le projet utilise Vite.js avec AssetMapper pour la gestion des assets frontend.
+
+### Installation des dépendances frontend
+
+```bash
+npm install
+```
+
+### Commandes disponibles
+
+Pour le développement :
+```bash
+npm run dev
+```
+
+Pour la production :
+```bash
+npm run build
+```
+
+### Utilisation dans Twig
+
+Pour utiliser vos assets dans les templates Twig :
+```twig
+{{ asset('assets/app.js') }}
+```
+
+Les fichiers sources se trouvent dans le dossier `assets/`.
+
+## Tailwind CSS
+
+Le projet utilise Tailwind CSS pour le styling. La configuration est déjà mise en place avec :
+- PostCSS pour le traitement CSS
+- Autoprefixer pour la compatibilité navigateur
+- Configuration Tailwind optimisée pour Symfony
+
+### Utilisation
+
+Les classes Tailwind sont disponibles dans tous vos templates Twig :
+
+```twig
+<div class="bg-blue-500 text-white p-4 rounded-lg">
+    Hello Tailwind!
+</div>
+```
+
+### Personnalisation
+
+Vous pouvez personnaliser Tailwind en modifiant :
+- `tailwind.config.js` pour les thèmes et plugins
+- `assets/styles/app.css` pour vos styles personnalisés
+
 ## Commandes utiles
 
 - Accéder au conteneur PHP :
