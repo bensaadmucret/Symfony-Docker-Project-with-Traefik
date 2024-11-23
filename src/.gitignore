@@ -27,4 +27,7 @@
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
+node_modules
+/node_modules/*
+
 ###< friendsofphp/php-cs-fixer ###

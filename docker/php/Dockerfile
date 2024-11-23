@@ -1,31 +1,49 @@
 FROM php:8.2-fpm-alpine
 
-# Installation des dépendances système
+# Install system dependencies
 RUN apk add --no-cache \
-    postgresql-dev \
-    libzip-dev \
-    icu-dev \
-    linux-headers \
-    $PHPIZE_DEPS
+    acl \
+    fcgi \
+    file \
+    gettext \
+    git \
+    gnu-libiconv \
+    nodejs \
+    npm
 
-# Installation des extensions PHP
-RUN docker-php-ext-install \
-    pdo_pgsql \
-    zip \
-    intl \
-    opcache
+# Install PHP extensions
+RUN set -eux; \
+    apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        icu-dev \
+        libzip-dev \
+        postgresql-dev \
+    ; \
+    docker-php-ext-configure zip; \
+    docker-php-ext-install -j$(nproc) \
+        intl \
+        pdo_pgsql \
+        zip \
+    ; \
+    runDeps="$( \
+        scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
+            | tr ',' '\n' \
+            | sort -u \
+            | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+    )"; \
+    apk add --no-cache --virtual .php-phpexts-rundeps $runDeps; \
+    apk del .build-deps
 
-# Installation de Composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Configuration PHP pour Symfony
-RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+# Set working directory
+WORKDIR /var/www/html/src
 
-WORKDIR /var/www/html
-
-# Copie du script d'entrée
+# Copy entrypoint script
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
 
+# Set entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
