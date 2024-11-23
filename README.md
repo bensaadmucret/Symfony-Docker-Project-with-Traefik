@@ -70,12 +70,6 @@ Pour la production :
 npm run build
 ```
 
-### Utilisation dans Twig
-
-Pour utiliser vos assets dans les templates Twig :
-```twig
-{{ asset('assets/app.js') }}
-```
 
 Les fichiers sources se trouvent dans le dossier `assets/`.
 
